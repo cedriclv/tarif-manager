@@ -21,8 +21,54 @@ public class AddressLegacyDao {
     }
 
     public Optional<Address> getByIdJava7Syntax(long id) {
-        // Challenge: Add the retrieval of the Address ResultSet and the Mapping to an instance of Address here.
+        /*
+        Create the connection object
+        The getConnection() method of DataSource, which is configured by Spring with the configuration of application.properties, is used to establish connection with the database.
+        */
+
+        // We use try-catch-finally introduced in Java 7
+        try (Connection connection = dataSource.getConnection();
+            /*
+             Create the Statement object
+             The preparedStatement() method of Connection interface is used to create statement. The object of statement is responsible to execute queries with the database.
+
+             // NOTE
+             // For security reasons: Always use PreparedStatements, not Statement
+             */
+            PreparedStatement stmt = connection.prepareStatement("SELECT * FROM ADDRESS WHERE ID=?")) {
+            stmt.setLong(1, id);
+            /*
+             Execute the query
+             The executeQuery() method of Statement interface is used to execute queries to the database. This method returns the object of ResultSet that can be used to get all the records of a table.
+             */
+            try (ResultSet resultSet = stmt.executeQuery()) {
+                while (resultSet.next()) {
+                    /*
+                     Read results from ResultSet
+                     */
+                    String city = resultSet.getString(2);
+                    String postalcode = resultSet.getString(4);
+                    String street = resultSet.getString(5);
+                    String number = resultSet.getString(3);                    
+                    Address address = new Address();
+                    address.setId(id);
+                    address.setCity(city);
+                    address.setPostalcode(postalcode);                    address.setStreet(street);
+                    address.setNumber(number);
+                    
+                    return Optional.of(address);
+                }
+            }
+        } catch (SQLException sqlException) {
+            sqlException.printStackTrace();
+        }
         return Optional.empty();
     }
 
 }
+
+// Long id = resultSet.getLong(1);
+// String city = resultSet.getString(2);
+// String postalcode = resultSet.getString(4);
+// String street = resultSet.getString(5);
+// String number = resultSet.getString(3);
