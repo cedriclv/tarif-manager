@@ -39,4 +39,8 @@ public class ContractView {
         return null;
     }
 
+    @GetMapping("/essai")
+    public String view() {
+        return "totot";
+    }
 }
