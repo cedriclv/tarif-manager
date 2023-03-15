@@ -9,6 +9,7 @@ public class TariffManagerApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(TariffManagerApplication.class, args);
+//		System.out.println("===================???=======================");
 	}
 
 }
