@@ -21,9 +21,10 @@ public class CustomerService {
     private final AddressRepository addressRepository;
     private final ContactRepository contactRepository;
     // Challenge: Make legalAge configurable
-    private final int legalAge = 18;
+    private final int legalAge;
 
-    public CustomerService(CustomerRepository customerRepository, AddressRepository addressRepository, ContactRepository contactRepository) {
+    public CustomerService(@Value("${maturity.age}") int legalAge, CustomerRepository customerRepository, AddressRepository addressRepository, ContactRepository contactRepository) {
+        this.legalAge = legalAge;
         this.customerRepository = customerRepository;
         this.addressRepository = addressRepository;
         this.contactRepository = contactRepository;
@@ -61,12 +62,12 @@ public class CustomerService {
 
     // Examine the Repository to see if there are methods defined which can be used here.
     public Iterable<Customer> filterOfLegalAgeCustomersInRepository() {
-        return null;
+        return customerRepository.findAllByBirthdateIsBefore(LocalDate.now().minusYears(legalAge));
     }
 
     // Examine the Repository to see if there are methods defined which can be used here.
     public Iterable<Customer> filterOfLegalAgeAndLastname(String lastname) {
-        return null;
+        return customerRepository.findAllByBirthdateIsBeforeAndLastnameContainingIgnoreCase(LocalDate.now().minusYears(legalAge), lastname);
     }
 
     private boolean isOfLegalAge(Customer customers) {

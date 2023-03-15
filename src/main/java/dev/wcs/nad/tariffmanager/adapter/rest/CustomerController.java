@@ -1,17 +1,25 @@
 package dev.wcs.nad.tariffmanager.adapter.rest;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import dev.wcs.nad.tariffmanager.adapter.rest.dto.customer.AddressDto;
 import dev.wcs.nad.tariffmanager.adapter.rest.dto.customer.CreateCustomerDto;
 import dev.wcs.nad.tariffmanager.adapter.rest.dto.customer.CustomerDto;
 import dev.wcs.nad.tariffmanager.mapper.mapstruct.EntityToDtoMapper;
 import dev.wcs.nad.tariffmanager.persistence.entity.Customer;
 import dev.wcs.nad.tariffmanager.service.CustomerService;
-import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 public class CustomerController {
@@ -22,6 +30,16 @@ public class CustomerController {
     public CustomerController(CustomerService customerService, EntityToDtoMapper entityToDtoMapper) {
         this.customerService = customerService;
         this.entityToDtoMapper = entityToDtoMapper;
+    }
+
+    @GetMapping("/api/customersOfLegalAge")
+    public List<CustomerDto> displayCustomersAdult(@RequestParam (required=false) String lastname ){
+        List<CustomerDto> customerDtos = new ArrayList<>();
+        Iterable<Customer> relevantCustomers = StringUtils.hasText(lastname) ? customerService.filterOfLegalAgeAndLastname(lastname) : customerService.filterOfLegalAgeCustomersInRepository();
+        for (Customer customer: relevantCustomers) {
+                customerDtos.add(entityToDtoMapper.customerToCustomerDto(customer));
+        }
+        return customerDtos;   
     }
 
     @GetMapping("/api/customers")
