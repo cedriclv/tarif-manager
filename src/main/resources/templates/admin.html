@@ -6,6 +6,10 @@
 <body>
 <section layout:fragment="content">
     <p><span style="color: red; ">Welcome Admin!</span></p>
+    <ul th:each="users : ${userDtos}">
+        <li th:text="${users.username}"></li>
+        <li th:text="${users.userRole}"></li>
+    </ul>
     <div>
         Logged user: <b><span sec:authentication="name"></span></b><br/>
         Assigned Roles: <b><span sec:authentication="principal.authorities"></span></b>
