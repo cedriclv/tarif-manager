@@ -26,21 +26,16 @@ public class ContractView {
         this.entityToDtoMapper = entityToDtoMapper;
     }
 
+//    @GetMapping("/{custId}/contracts/view")
     @GetMapping("/{custId}/contracts/view")
     public String viewContractsOfCustomer(Model model, @PathVariable Long custId) {
-        model.addAttribute("now", new Date().toInstant());
-
         List<ContractInfoDto> contractInfoDtos = new ArrayList<>();
         // Challenge:
+        contractInfoDtos = entityToDtoMapper.contractsToContractInfosDto(contractService.readContractsForUser(custId));
+        model.addAttribute("contractInfoDtos", contractInfoDtos);
         // 1. Read Contracts for User from Service
         // 2. Map Contract objects to ContractInfoDto objects and add to List
         // 3. Redirect to a new page "customerContractsListView"
-
-        return null;
-    }
-
-    @GetMapping("/essai")
-    public String view() {
-        return "totot";
+        return "customerContractsListView";
     }
 }
